@@ -21,8 +21,10 @@
     "cors": "^2.7.1",
     "debug": "^2.2.0",
     "express": "^4.14.0",
+    "express-myconnection": "^1.0.4",
     "hbs": "^4.0.0",
     "morgan": "^1.7.0",
+    "mysql": "^2.11.1",
     "serve-favicon": "^2.3.0",
     "socket.io": "^1.4.8"
   }
