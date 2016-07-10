@@ -1,0 +1,40 @@
+<div class="padding-20">
+    <b>{{event.name}}</b>
+    <br>
+
+    <p>{{event.start_date}}</p>
+
+    {{#if event.finished}}
+        <h1>Finished.</h1>
+    {{else}}
+        <h1 id="event-time" data-startdate="{{event.start_date}}">&nbsp;</h1>
+    {{/if}}
+
+    <table id="my-final-table"></table>
+</div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+    var spinner;
+
+    $(document).ready(function(){
+        var target = $('#spinner');
+        spinner = new Spinner().spin();
+        target.append(spinner.el)
+    });
+
+    var socket = io();
+
+    socket.on('refresh', function(msg){
+        spinner.stop();
+        $('#spinner').remove();
+
+        $('#container').html("");
+        msg.contestants.forEach(function(item, index){
+            $('#container').append("<h2>" + item.name + " - " + item.time + "</h2>");
+        });
+
+    });
+</script>
