@@ -6,28 +6,6 @@ var checkpoint_model = require('../models/checkpoint_model');
 
 router.post('/checkpoint', function(req, res) {
     var data = req.body;
-    //
-    //
-    //var data = {
-    //    contestants: [
-    //        {
-    //            name: "Wiesław Gaszyński",
-    //            time: "2:35:32"
-    //        },
-    //        {
-    //            name: "Adam Kowalski",
-    //            time: "2:44:02"
-    //        },
-    //        {
-    //            name: "Jan Nowak",
-    //            time: "2:49:02"
-    //        },
-    //        {
-    //            name: "Andrzej Krawczyk",
-    //            time: "2:59:12"
-    //        }
-    //    ]
-    //};
 
     req.getConnection(function(err, connection) {
         if (err) return next(err);

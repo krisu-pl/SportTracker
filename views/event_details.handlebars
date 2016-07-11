@@ -1,6 +1,7 @@
 <div class="padding-20">
-    <b>{{event.name}}</b>
-    <br>
+    <p id="event-id" data-event-id="{{event.id}}">
+        <b>{{event.name}}</b>
+    </p>
 
     <p>{{event.start_date}}</p>
 
@@ -10,31 +11,71 @@
         <h1 id="event-time" data-startdate="{{event.start_date}}">&nbsp;</h1>
     {{/if}}
 
-    <table id="my-final-table"></table>
+    <table id="event-data-table">
+        <thead>
+            <th>Participant's name</th>
+            <th>Number</th>
+            <th>Category</th>
+            <th>Team</th>
+            <th>City</th>
+            {{#each checkpoints}}
+                <th data-checkpoint-id="{{id}}">{{name}}</th>
+            {{/each}}
+        </thead>
+        <tbody>
+            {{#each participants}}
+                <tr>
+                    <td>{{participant_name}}</td>
+                    <td>{{starting_number}}</td>
+                    <td>{{category_name}}</td>
+                    <td>{{team}}</td>
+                    <td>{{city}}</td>
+                    {{#each ../checkpoints}}
+                        <td data-checkpoint-id="{{id}}" data-participant-id="{{../id}}">
+                            {{lookup ../times id}}
+                        </td>
+                    {{/each}}
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
 </div>
 
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
 
-    var spinner;
+    //    var spinner;
+    //
+    //    $(document).ready(function(){
+    //        var target = $('#spinner');
+    //        spinner = new Spinner().spin();
+    //        target.append(spinner.el)
+    //    });
 
-    $(document).ready(function(){
-        var target = $('#spinner');
-        spinner = new Spinner().spin();
-        target.append(spinner.el)
-    });
+
+    var dataSet = [];
+
+    var table = $('#event-data-table').DataTable();
+
 
     var socket = io();
+    socket.emit('follow-event', $('#event-id').data('event-id'));
 
-    socket.on('refresh', function(msg){
-        spinner.stop();
-        $('#spinner').remove();
+    socket.on('refresh', function (data) {
+//        spinner.stop();
+//        $('#spinner').remove();
 
-        $('#container').html("");
-        msg.contestants.forEach(function(item, index){
-            $('#container').append("<h2>" + item.name + " - " + item.time + "</h2>");
-        });
+        var $cell = $("td[data-checkpoint-id='" + data.checkpoint_id +"'][data-participant-id='" + data.participant_id +"']");
+
+        var tableCell = table.cell($cell);
+        tableCell.data(data.time);
+        $cell.addClass('updated');
+        tableCell.draw();
+        setTimeout(function () {
+            $cell.removeClass('updated');
+        }, 3000);
 
     });
 </script>
