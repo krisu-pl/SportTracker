@@ -1,8 +1,6 @@
 var io = require('socket.io')();
 var http = require('http').Server(app);
 
-var dataController = require('./controllers/data');
-
 exports.init = function () {
     io.attach(http);
 
@@ -16,11 +14,6 @@ exports.init = function () {
         socket.on('follow-event', function(eventId){
             socket.join(eventId);
             console.log('Client is following event: ' + eventId);
-
-            var clientId = socket.id;
-            console.log(clientId);
-            var data = dataController.getEventData(eventId);
-            sendToClient(clientId, data);
         });
     });
 
