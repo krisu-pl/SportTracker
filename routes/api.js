@@ -3,6 +3,7 @@ var router = express.Router();
 
 var event_model = require('../models/event_model');
 var checkpoint_model = require('../models/checkpoint_model');
+var event_controller = require('../controllers/event_controller');
 
 router.post('/checkpoint', function(req, res) {
     var data = req.body;
@@ -26,8 +27,20 @@ router.post('/checkpoint', function(req, res) {
 
 router.post('/updateFromMobile', function (req, res) {
 
-    app.sockets.send('refresh', data)
+    app.sockets.send('refresh', data);
     res.sendStatus(200);
+});
+
+router.get('/mobile/getAllEvents', function(req, res) {
+    console.log('uuu');
+    event_controller.getAll(req, function (err, results) {
+        if(err) {
+            console.warn(err);
+            //res.sendStatus(500);
+            return;
+        }
+        res.json(results);
+    })
 });
 
 module.exports = router;
