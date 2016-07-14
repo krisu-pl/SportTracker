@@ -1,20 +1,23 @@
-var db = require('../db');
-var randomstring = require("randomstring");
+const db = require('../db');
+const randomstring = require("randomstring");
 
-exports.getSessionKey = function (data, connection, callback) {
-    var query = '' +
-        'SELECT session_key ' +
-        'FROM sessions ' +
-        'WHERE participant_event_id = "' + data.id + '"';
-    db.query(query, connection, callback);
+
+exports.getSessionKey = (data, ...args) => {
+    const query = `
+        SELECT session_key
+        FROM sessions
+        WHERE participant_event_id = "${data.id}"`;
+
+    db.query(query, ...args);
 };
 
-exports.generateSessionKey = function (data, connection, callback) {
-    var session_key = randomstring.generate();
+exports.generateSessionKey = (data, connection, callback) => {
+    const session_key = randomstring.generate();
 
-    var query = '' +
-        'INSERT INTO sessions ' +
-        'VALUES(' + data.id + ',"' + session_key + '") ' +
-        'ON DUPLICATE KEY UPDATE session_key = "' + session_key + '"';
+    const query = `
+        INSERT INTO sessions
+        VALUES(${data.id}, "${session_key}")
+        ON DUPLICATE KEY UPDATE session_key = "${session_key}"`;
+
     db.query(query, connection, callback);
 };

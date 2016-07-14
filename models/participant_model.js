@@ -38,7 +38,7 @@ exports.getSingleEventParticipant = function (data, connection, callback) {
         '   connect_participants_events.starting_number, ' +
         '   participants.name, ' +
         '   participants.team, ' +
-        '   participants.city, ' +
+        '   participants.city ' +
         'FROM connect_participants_events ' +
         'JOIN participants ' +
         '   ON participants.id = connect_participants_events.participant_id ' +
@@ -46,5 +46,7 @@ exports.getSingleEventParticipant = function (data, connection, callback) {
         '   event_id = "' + data.event_id + '" ' +
         '   AND starting_number = "' + data.starting_number + '" ' +
         '   AND pin = "' + data.pin + '"';
+
+    console.log(query);
     db.query(query, connection, callback);
 };

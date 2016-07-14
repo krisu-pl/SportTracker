@@ -5,8 +5,8 @@
  * @param connection - created by express-myconnection
  * @param callback - function(err, results)
  */
-exports.query = function(query, connection, callback){
-    connection.query(query, [], function(err, results) {
+exports.query = (query, connection, callback) => {
+    connection.query(query, [], (err, results) => {
         if (err) {
             callback(err, null);
             return;
