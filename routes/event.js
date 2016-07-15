@@ -1,121 +1,150 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-var event_model = require('../models/event_model');
-var checkpoint_model = require('../models/checkpoint_model');
-var participant_model = require('../models/participant_model');
+const event_model = require('../models/event_model');
+const checkpoint_model = require('../models/checkpoint_model');
+const participant_model = require('../models/participant_model');
 
 /**
- * GET Event page - list of results
+ * GET Event page - list of participants and their results
  */
-router.get('/', function(req, res, next) {
-    var eventId = req.query.id;
+router.get('/', function (req, res, next) {
+    const eventId = req.query.id;
 
-    req.getConnection(function(err, connection) {
-        if (err) return next(err);
+    getConnection({eventId, req})
+        .then(getEventDetails)
+        .then(getEventCheckpoints)
+        .then(getEventParticipants)
+        .then(calculateCheckpoints)
+        .then(returnData => {
+            console.log(returnData);
+            res.render('event_details', returnData);
+        })
+        .catch(err => {
+            console.error(err);
+            res.sendStatus(500);
+        })
 
-        // Get details for this event
-        getEventDetails(eventId, connection, res, function (event) {
-            // Get checkpoints for this event
-            getEventCheckpoints(eventId, connection, res, function (checkpoints) {
-                // Get participants for this event
-                getEventParticipants(eventId, connection, res, function (participants) {
-
-                    var checkpointsLeft = checkpoints.length;
-                    var allTimes = [];
-
-                    checkpoints.forEach(function (checkpoint){
-                        // For each checkpoint get its times
-                        getCheckpointTimes(checkpoint.id, connection, res, function (times){
-                            allTimes[checkpoint.id] = times;
-                            checkpointsLeft--;
-
-                            if(checkpointsLeft === 0){
-
-                                // Move times from checkpoints to participants object
-                                var participantsTimes = moveTimesToParticipants(allTimes);
-
-                                // Merge objects
-                                participants = mergeParticipantsWithTimes(participants, participantsTimes);
-
-                                // Render final view
-                                res.render('event_details', {
-                                    event: event,
-                                    checkpoints: checkpoints,
-                                    participants: participants
-                                });
-                            }
-                        })
-                    });
-                })
-            })
-        });
-
-    });
 });
+
+/**
+ * Returns connection to the database
+ *
+ * @param eventId
+ * @param req
+ * @returns {Promise}
+ */
+const getConnection = ({eventId, req}) => {
+    return new Promise((resolve, reject) => {
+        req.getConnection((err, connection) => {
+            if (err) reject(err);
+            resolve({eventId, connection});
+        });
+    });
+};
 
 /**
  * Returns event details
  *
  * @param eventId
  * @param connection
- * @param res
- * @param callback
+ * @returns {Promise}
  */
-function getEventDetails(eventId, connection, res, callback){
-    event_model.getDetails(eventId, connection, function (err, results) {
-        if (err) {
-            res.sendStatus(500);
-            return console.error(err);
-        }
+const getEventDetails = ({eventId, connection}) => {
+    return new Promise((resolve, reject) => {
+        event_model.getDetails(eventId, connection, (err, results) => {
+            if (err) reject(err);
 
-        if (results.length == 0) {
-            // No such event
-            res.sendStatus(401);
-            return;
-        }
+            if (results.length == 0) {
+                reject(new Error("No such event"));
+            }
 
-        callback(results[0]);
+            const event = results[0];
+
+            resolve({event, eventId, connection});
+        });
     });
-}
+};
 
 /**
  * Returns checkpoints of the event
  *
+ * @param event
  * @param eventId
  * @param connection
- * @param res
- * @param callback
+ * @returns {Promise}
  */
-function getEventCheckpoints(eventId, connection, res, callback){
-    checkpoint_model.getForEvent(eventId, connection, function(err, results) {
-        if (err) {
-            res.sendStatus(500);
-            return console.error(err);
-        }
+const getEventCheckpoints = ({event, eventId, connection}) => {
+    return new Promise((resolve, reject) => {
+        checkpoint_model.getForEvent(eventId, connection, (err, results) => {
+            if (err) reject(err);
 
-        callback(results);
+            const checkpoints = results;
+
+            resolve({checkpoints, event, eventId, connection});
+        });
     });
-}
+};
 
 /**
  * Returns participants of the event
  *
+ * @param checkpoints
+ * @param event
  * @param eventId
  * @param connection
- * @param res
- * @param callback
+ * @returns {Promise}
  */
-function getEventParticipants(eventId, connection, res, callback){
-    participant_model.getForEvent(eventId, connection, function(err, results) {
-        if (err) {
-            res.sendStatus(500);
-            return console.error(err);
-        }
+const getEventParticipants = ({checkpoints, event, eventId, connection}) => {
+    return new Promise((resolve, reject) => {
+        participant_model.getForEvent(eventId, connection, (err, results) => {
+            if (err) reject(err);
 
-        callback(results);
-    })
-}
+            const participants = results;
+
+            resolve({participants, checkpoints, event, eventId, connection});
+        });
+    });
+};
+
+/**
+ * Get times for each checkpoint and prepare return data for client
+ *
+ * @param participants
+ * @param checkpoints
+ * @param event
+ * @param eventId
+ * @param connection
+ * @returns {Promise}
+ */
+const calculateCheckpoints = ({participants, checkpoints, event, eventId, connection}) => {
+    return new Promise((resolve, reject) => {
+        var checkpointsLeft = checkpoints.length;
+        var allTimes = [];
+
+        checkpoints.forEach(function (checkpoint) {
+            // For each checkpoint get its times
+            getCheckpointTimes(checkpoint.id, connection, (err, times) => {
+                if(err) resolve(err);
+
+                allTimes[checkpoint.id] = times;
+                checkpointsLeft--;
+
+                if (checkpointsLeft === 0) {
+
+                    // Move times from checkpoints to participants object
+                    var participantsTimes = moveTimesToParticipants(allTimes);
+
+                    // Merge objects
+                    participants = mergeParticipantsWithTimes(participants, participantsTimes);
+
+                    resolve({event, checkpoints, participants});
+
+                }
+            })
+        });
+    });
+};
 
 /**
  * Returns all times from a given checkpoint
@@ -125,14 +154,9 @@ function getEventParticipants(eventId, connection, res, callback){
  * @param res
  * @param callback
  */
-function getCheckpointTimes(checkpointId, connection, res, callback){
-    checkpoint_model.getCheckpointTimes(checkpointId, connection, function(err, results) {
-        if (err) {
-            res.sendStatus(500);
-            return console.error(err);
-        }
-
-        callback(results);
+function getCheckpointTimes(checkpointId, connection, callback) {
+    checkpoint_model.getCheckpointTimes(checkpointId, connection, function (err, results) {
+        callback(err, results);
     })
 }
 
@@ -150,13 +174,13 @@ function getCheckpointTimes(checkpointId, connection, res, callback){
  *      [checkpoint_id] = time
  * }
  */
-function moveTimesToParticipants(allCheckpointsTimes){
+function moveTimesToParticipants(allCheckpointsTimes) {
     var participantsTimes = [];
-    allCheckpointsTimes.forEach(function(singleCheckpointTimes){
+    allCheckpointsTimes.forEach(function (singleCheckpointTimes) {
         singleCheckpointTimes.forEach(function (singleTime) {
             var participantId = singleTime.participant_id;
             var checkpointId = singleTime.checkpoint_id;
-            if(!participantsTimes[participantId]) {
+            if (!participantsTimes[participantId]) {
                 participantsTimes[participantId] = [];
             }
             participantsTimes[participantId][checkpointId] = singleTime.time;
@@ -172,9 +196,9 @@ function moveTimesToParticipants(allCheckpointsTimes){
  * @param participantsTimes
  * @returns {Array}
  */
-function mergeParticipantsWithTimes(participants, participantsTimes){
+function mergeParticipantsWithTimes(participants, participantsTimes) {
     participants.forEach(function (participant) {
-        if(typeof participantsTimes[participant.id] != "undefined"){
+        if (typeof participantsTimes[participant.id] != "undefined") {
             participant.times = participantsTimes[participant.id];
         }
     });
