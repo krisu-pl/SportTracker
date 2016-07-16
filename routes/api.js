@@ -20,20 +20,13 @@ router.post('/checkpoint', (req, res) => {
                 return;
             }
             console.log(results);
+            console.log(data);
+            app.sockets.sendEventUpdate(data.event_id, data);
             res.sendStatus(200);
         });
     });
 
-    app.sockets.send('refresh', data);
 });
-
-
-router.post('/updateFromMobile', (req, res) => {
-
-    app.sockets.send('refresh', data);
-    res.sendStatus(200);
-});
-
 
 router.get('/mobile/getAllEvents', (req, res) => {
     event_controller.getAll(req, (err, results) => {
@@ -78,12 +71,15 @@ router.post('/mobile/login', (req, res) => {
 router.post('/mobile/sendLocation', (req, res) => {
     const data = req.body;
 
-    participant_controller.saveLocation(data, req, (err)  => {
+    mobile_controller.saveLocation(data, req, (err)  => {
         if(err) {
             console.error(err);
             res.sendStatus(500);
             return;
         }
+
+        // Send location update to clients
+        app.sockets.sendLocationUpdate(data.participant_event_id, data);
 
         res.sendStatus(200);
     });

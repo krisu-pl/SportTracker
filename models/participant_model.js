@@ -14,6 +14,7 @@ exports.getForEvent = (eventId, connection, callback) => {
            participants.name as participant_name,
            team,
            city,
+           connect_participants_events.id as participant_event_id,
            starting_number,
            category_id,
            categories.name as category_name

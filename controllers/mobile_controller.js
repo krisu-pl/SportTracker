@@ -73,6 +73,15 @@ const getSessionKey = ({participant_event, connection}) => {
     });
 };
 
+const insertLocation = ({data, connection}) => {
+    return new Promise((resolve, reject) => {
+        participant_model.insertLocation(data, connection, (err, results) => {
+            if (err) reject(err);
+            resolve();
+        });
+    });
+};
+
 exports.login = (data, req, callback) => {
     getConnection({data, req})
         .then(getSingleEventParticipant)
@@ -83,5 +92,16 @@ exports.login = (data, req, callback) => {
         })
         .catch((err) => {
             callback(err)
+        });
+};
+
+exports.saveLocation = function(data, req, callback){
+    getConnection({data, req})
+        .then(insertLocation)
+        .then(() => {
+            callback(null);
+        })
+        .catch((err) => {
+            callback(err);
         });
 };

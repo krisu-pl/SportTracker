@@ -27,9 +27,8 @@ app.use(myConnection(mysql, dbOptions, 'single'));
 /**
  * Socket.IO
  */
-var sockets = require('./sockets');
-app.sockets = sockets;
-app.sockets.init();
+app.sockets = require('./sockets');
+//app.sockets.init();
 
 
 /**

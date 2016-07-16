@@ -37,6 +37,8 @@ body {
     width: 100%;
     height: 400px;
 }
+
+
 /*
 *
 * Table Styles
@@ -167,4 +169,16 @@ td.updated {
     transition: all 0.1s;
     background: #ff6f1e !important;
     color: #fff;
+}
+
+.follow {
+    cursor: pointer;
+}
+.follow:hover {
+    color: yellow;
+}
+.unfollow {
+    cursor: pointer;
+    color: red;
+    display: none;
 }
