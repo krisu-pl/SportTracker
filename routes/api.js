@@ -1,20 +1,21 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-var event_model = require('../models/event_model');
-var checkpoint_model = require('../models/checkpoint_model');
-var event_controller = require('../controllers/event_controller');
-var mobile_controller = require('../controllers/mobile_controller');
+const event_model = require('../models/event_model');
+const checkpoint_model = require('../models/checkpoint_model');
+const event_controller = require('../controllers/event_controller');
+const participant_controller = require('../controllers/participant_controller');
+const mobile_controller = require('../controllers/mobile_controller');
 
-router.post('/checkpoint', function(req, res) {
-    var data = req.body;
+router.post('/checkpoint', (req, res) => {
+    const data = req.body;
 
-    req.getConnection(function(err, connection) {
+    req.getConnection((err, connection) => {
         if (err) return next(err);
 
-        checkpoint_model.insertTime(data, connection, function(err, results){
+        checkpoint_model.insertTime(data, connection, (err, results) => {
             if(err) {
-                console.log(err);
+                console.error(err);
                 res.sendStatus(500);
                 return;
             }
@@ -27,17 +28,17 @@ router.post('/checkpoint', function(req, res) {
 });
 
 
-router.post('/updateFromMobile', function (req, res) {
+router.post('/updateFromMobile', (req, res) => {
 
     app.sockets.send('refresh', data);
     res.sendStatus(200);
 });
 
 
-router.get('/mobile/getAllEvents', function(req, res) {
-    event_controller.getAll(req, function (err, results) {
+router.get('/mobile/getAllEvents', (req, res) => {
+    event_controller.getAll(req, (err, results) => {
         if(err) {
-            console.warn(err);
+            console.error(err);
             res.sendStatus(500);
             return;
         }
@@ -45,16 +46,16 @@ router.get('/mobile/getAllEvents', function(req, res) {
     })
 });
 
-router.post('/mobile/login', function(req, res) {
-    var data = req.body;
-    mobile_controller.login(data, req, function (err, results) {
+router.post('/mobile/login', (req, res) => {
+    const data = req.body;
+    mobile_controller.login(data, req, (err, results)  => {
         if(err) {
-            console.warn(err);
+            console.error(err);
             res.sendStatus(500);
             return;
         }
 
-        var participant = results;
+        const participant = results;
         console.log(results);
 
         if(participant.length == 0) {
@@ -62,6 +63,29 @@ router.post('/mobile/login', function(req, res) {
             return;
         }
         res.json(participant);
+    });
+});
+
+/**
+ * Adds new participant's location to the database
+ *
+ * data = {
+ *  participant_event_id: {Int}
+ *  lat: {Double}
+ *  lng: {Double}
+ * }
+ */
+router.post('/mobile/sendLocation', (req, res) => {
+    const data = req.body;
+
+    participant_controller.saveLocation(data, req, (err)  => {
+        if(err) {
+            console.error(err);
+            res.sendStatus(500);
+            return;
+        }
+
+        res.sendStatus(200);
     });
 });
 

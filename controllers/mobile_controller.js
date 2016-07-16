@@ -30,6 +30,7 @@ const getSingleEventParticipant = ({data, connection}) => {
         participant_model.getSingleEventParticipant(data, connection, (err, results) => {
             if (err) reject(err);
             const participant_event = results[0];
+            console.error(participant_event);
             resolve({participant_event, connection});
         });
     });
@@ -62,10 +63,10 @@ const getSessionKey = ({participant_event, connection}) => {
     return new Promise((resolve, reject) => {
         session_model.getSessionKey(participant_event, connection, (err, results) => {
             if (err) reject(err);
-            const sessionKey = results[0];
+
             resolve({
                 participant: participant_event,
-                session_key: sessionKey
+                session_key: results[0].session_key
             });
         });
 

@@ -32,7 +32,16 @@ body {
     font-weight: 400;
     cursor: pointer;
 }
-/*** Table Styles **/
+
+#map {
+    width: 100%;
+    height: 400px;
+}
+/*
+*
+* Table Styles
+*
+*/
 
 .table-fill {
     background: white;

@@ -59,3 +59,54 @@ $(document).ready(function () {
     }
 
 });
+
+
+/**
+ * SOCKETS
+ */
+
+var dataSet = [];
+
+var table = $('#event-data-table').DataTable();
+
+
+var socket = io();
+socket.emit('follow-event', $('#event-id').data('event-id'));
+
+socket.on('refresh', function (data) {
+
+    var $cell = $("td[data-checkpoint-id='" + data.checkpoint_id +"'][data-participant-id='" + data.participant_id +"']");
+
+    var tableCell = table.cell($cell);
+    tableCell.data(data.time);
+    $cell.addClass('updated');
+    tableCell.draw();
+    setTimeout(function () {
+        $cell.removeClass('updated');
+    }, 3000);
+
+});
+
+
+socket.on('location-update', function (data) {
+    markers.forEach(function (marker) {
+        if(marker.participant_id == data.participant_id){
+            marker.setPosition(new google.maps.LatLng(data.lat, data.lng));
+        }
+    })
+});
+
+
+/**
+ * GOOGLE MAPS
+ */
+
+var map;
+var markers = {};
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: -34.397, lng: 150.644},
+        zoom: 8
+    });
+};

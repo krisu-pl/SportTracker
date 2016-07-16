@@ -12,6 +12,7 @@ exports.getSessionKey = (data, ...args) => {
 };
 
 exports.generateSessionKey = (data, connection, callback) => {
+
     const session_key = randomstring.generate();
 
     const query = `
@@ -19,5 +20,6 @@ exports.generateSessionKey = (data, connection, callback) => {
         VALUES(${data.id}, "${session_key}")
         ON DUPLICATE KEY UPDATE session_key = "${session_key}"`;
 
+    console.log(query);
     db.query(query, connection, callback);
 };
