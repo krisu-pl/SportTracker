@@ -13,6 +13,18 @@
 
     <div id="map"></div>
 
+    <table id="following-data-table">
+        <thead>
+            <th>Participant's name</th>
+            <th>Number</th>
+            {{#each checkpoints}}
+                <th data-checkpoint-id="{{id}}">{{name}}</th>
+            {{/each}}
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
     <table id="event-data-table">
         <thead>
             <th>Participant's name</th>
@@ -28,7 +40,7 @@
         <tbody>
             {{#each participants}}
                 <tr data-participant-event-id="{{participant_event_id}}">
-                    <td>{{participant_name}}</td>
+                    <td class="participant_name">{{participant_name}}</td>
                     <td>{{starting_number}}</td>
                     <td>{{category_name}}</td>
                     <td>{{team}}</td>

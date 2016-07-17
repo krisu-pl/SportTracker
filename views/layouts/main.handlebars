@@ -7,28 +7,30 @@
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link type="text/css" rel="stylesheet" href="css/jquery.dynatable.css"/>
     <link type="text/css" rel="stylesheet" href="css/main.css"/>
-    <link type="text/css" rel="stylesheet" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/jquery.dataTables.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/leaflet-0.7.7.css"/>
+    <link type="text/css" rel="stylesheet" href="css/leaflet.elevation-0.0.4.css"/>
+    <link type="text/css" rel="stylesheet" href="css/leaflet.label.css"/>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/jquery-2.2.4.min.js"></script>
-    <script src="js/jquery.dynatable.js"></script>
-    <script src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-    <script src="js/spin.min.js"></script>
+    <script src="js/jquery.dataTables.min.js"></script>
+
+    <!-- Maps -->
+    <script src="js/d3.v3.min.js" charset="utf-8"></script>
+    <script src="js/leaflet-0.7.7.js"></script>
+    <script type="text/javascript" src="js/leaflet.elevation-0.0.4.min.js"></script>
+    <script type="text/javascript" src="js/leaflet.gpx.js"></script>
+    <script type="text/javascript" src="js/leaflet.label.js"></script>
+
+    <!-- Main app file -->
     <script src="js/main.js"></script>
 
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhkEyHM2-BVAisFE8nrf8ZDmb1m2mq60w&callback=initMap"
-            type="text/javascript"></script>
 </head>
 <body style="margin: 0; padding: 0;">
 
-<!--<div id="spinner"  style="width: 100vw; height: 100vh;"></div>-->
-
-<!--<div id="container">-->
     {{{body}}}
-<!--</div>-->
 
 </body>
 </html>
