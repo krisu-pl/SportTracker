@@ -81,6 +81,10 @@ const getEventCheckpoints = ({event, eventId, connection}) => {
 
             const checkpoints = results;
 
+            if (checkpoints.length == 0) {
+                reject(new Error("This event has no checkpoints"));
+            }
+
             resolve({checkpoints, event, eventId, connection});
         });
     });

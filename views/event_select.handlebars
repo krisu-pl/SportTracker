@@ -11,3 +11,13 @@
         {{/each}}
     </select>
 </div>
+
+<script>
+    /**
+     * Go to event page after select from dropdown
+     */
+    $('#simulate-choose_event').on('change', function (e) {
+        const eventId = this.value;
+        window.location.href += 'event?id='+eventId;
+    });
+</script>
