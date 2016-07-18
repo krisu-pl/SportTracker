@@ -1,0 +1,145 @@
+$top_height: 70px;
+$orange: #ffaa2b;
+
+body {
+  margin: 0;
+  padding-top: $top_height;
+  font-family: Roboto, Arial, sans-serif;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+.padding-20 {
+  padding: 20px;
+}
+
+.right {
+  float: right;
+}
+
+.checkpoint_activate_btn {
+  color: #000;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+
+.follow {
+  cursor: pointer;
+}
+.follow:hover {
+  color: $orange;
+}
+.unfollow {
+  cursor: pointer;
+  color: red;
+  display: none;
+}
+
+
+#top {
+  width: 100vw;
+  height: $top_height;
+  z-index: 10000;
+  background: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+    background-color: $orange;
+    border: 0;
+    color: #fff;
+  }
+
+  .nav-tabs {
+    border: 0;
+  }
+
+  .nav {
+    width: 30%;
+    height: 100%;
+    float: left;
+    border: 0;
+
+    li {
+      width: 50%;
+      height: 100%;
+
+      @include media("<small"){
+        width: 100%;
+        height: 50%;
+      }
+
+      a {
+        height: 100%;
+        padding: 0;
+        border-radius: 0;
+        font-size: 20px;
+        font-weight: 300;
+        @include display-flex();
+        @include justify-content(center);
+        @include align-items(center);
+      }
+    }
+  }
+}
+
+#event_details {
+  width: 70%;
+  height: $top_height;
+  float: left;
+  @include display-flex();
+  @include justify-content(space-around);
+  @include align-items(center);
+
+  @include media("<small"){
+    @include flex-wrap(wrap);
+  }
+
+  #event-id {
+    font-weight: 100;
+    font-size: 30px;
+    margin: 0;
+    color: $orange;
+
+    @include media("<small"){
+      font-size: 16px;
+      font-weight: 400;
+    }
+  }
+
+  #event_name p {
+    @include media("<small"){
+      display: none;
+    }
+  }
+
+  #event_time p {
+    font-weight: 300;
+    font-size: 15px;
+  }
+}
+
+
+#following-data-table {
+  width: 50%;
+  max-height: calc(100vh - #{$top_height});
+  float: left;
+  
+  @include media("<small"){
+    width: 100%;
+  }
+}
+
+#map {
+  width: 50%;
+  height: calc(100vh - #{$top_height});
+  float: left;
+
+  @include media("<small"){
+    width: 100%;
+  }
+}

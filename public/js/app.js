@@ -8,11 +8,21 @@ $(document).ready(function () {
     map = L.map('map');
 
     var service = new L.tileLayer('https://api.mapbox.com/styles/v1/krisu/ciqpgxyy0003wcankixy95bud/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3Jpc3UiLCJhIjoiY2lxcGd5enllMDA2MGh5bWFrYnA0Z2hwMiJ9.4j9N70VORhhTh1eUOSjL3A', {
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://mapbox.com">Mapbox</a>',
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://mapbox.com">Mapbox</a>',
         maxZoom: 18
     }).addTo(map);
 
-    var el = L.control.elevation();
+    var el = L.control.elevation({
+        theme: "steelblue-theme", //default: lime-theme
+        width: 600,
+        height: 100,
+        margins: {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        }
+    });
     el.addTo(map);
 
     var gpx = 'trasa.gpx'; // URL to your GPX file or the GPX itself
@@ -37,7 +47,9 @@ $(document).ready(function () {
      * SOCKETS
      */
 
-    var generalTable = $('#event-data-table').DataTable();
+    var generalTable = $('#event-data-table').DataTable({
+        "dom": '<<"general-table-top"lf><t><"general-table-bottom"ip>>'
+    });
     var followingTable = $('#following-data-table');
 
     var socket = io();
@@ -113,7 +125,7 @@ $(document).ready(function () {
         var row = $(this).parents('tr').clone();
         var cells = row.children('td');
         // Remove Category, Team, City and Location columns
-        cells.splice(2, 3);
+        cells.splice(1, 3);
         cells.splice(cells.length - 1, 1);
         followingTable.children('tbody').append('<tr data-participant-event-id="' + id + '">');
         followingTable.children('tbody').children('tr:last').append(cells);

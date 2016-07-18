@@ -7,6 +7,7 @@ const babel = require('gulp-babel');
 
 var minifyCss = require('gulp-minify-css');
 var sass = require('gulp-sass');
+var compass = require('gulp-compass');
 
 const DIST_PATH = '../public';
 
@@ -26,9 +27,13 @@ gulp.task('build-js',function () {
 
 gulp.task('compile-sass', function() {
     return gulp.src('./sass/style.scss')
-        .pipe(sass().on('error', sass.logError))
-        .pipe(gulp.dest('./css/'));
+        .pipe(compass({
+            config_file: './config.rb'
+        }))
+        .on('error', swallowError)
+        .pipe(gulp.dest('./css'));
 });
+
 
 gulp.task('build-css',['compile-sass'],function () {
     gulp.src('./css/**/*.css')
