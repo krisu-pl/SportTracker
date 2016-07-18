@@ -2,6 +2,9 @@ $(document).ready(function () {
 
     const eventId = $('#event-id').data('event-id');
 
+    // Format start date of the event
+    const eventStartDate = $('#event_start_date').text();
+    $('#event_start_date').text(moment(eventStartDate).format('Do MMMM YYYY, HH:mm:ss'));
 
     /**
      * Create new map

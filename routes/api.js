@@ -4,7 +4,6 @@ const router = express.Router();
 const event_model = require('../models/event_model');
 const checkpoint_model = require('../models/checkpoint_model');
 const event_controller = require('../controllers/event_controller');
-const participant_controller = require('../controllers/participant_controller');
 const mobile_controller = require('../controllers/mobile_controller');
 
 router.post('/checkpoint', (req, res) => {
