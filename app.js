@@ -14,13 +14,8 @@ var exphbs = require('express-handlebars');
  */
 var mysql = require('mysql'),
     myConnection = require('express-myconnection'),
-    dbOptions = {
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        port: 3306,
-        database: 'sport_tracker'
-    };
+    dbConfig = require('./db-config'),
+    dbOptions = dbConfig.getConfig();
 app.use(myConnection(mysql, dbOptions, 'single'));
 
 
