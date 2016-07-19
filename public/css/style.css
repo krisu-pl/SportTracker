@@ -352,3 +352,7 @@ td.updated {
   -webkit-align-items: center;
   align-items: center;
 }
+
+#event-data-table {
+  padding-bottom: 35px;
+}

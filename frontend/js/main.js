@@ -55,7 +55,8 @@ $(document).ready(function () {
      */
     const $generalTable = $('#event-data-table');
     const generalTable = $generalTable.DataTable({
-        "dom": '<<"general-table-top"lf><t><"general-table-bottom"ip>>'
+        "dom": '<<"general-table-top"lf><t><"general-table-bottom"ip>>',
+        "pageLength": 25
     });
     const followingTable = $('#following-data-table');
 
